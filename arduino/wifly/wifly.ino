@@ -13,8 +13,9 @@ void setup() {
   pinMode(analogPin, OUTPUT);
   
   Serial.begin(9600);
-
+  Serial.println("Beginning");
   WiFly.begin();
+  Serial.println("Checkting connection to guest.");
   
   if (!WiFly.join("OLIN_GUEST", "The_Phoenix_Flies")) {
     Serial.println("Association failed.");
