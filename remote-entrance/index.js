@@ -259,15 +259,15 @@ function streamTracks(request, response, streamingSession) {
         streamingResponses.push(response);
 
         // When the player finishes
-        // player.once('track-end', function() {
+        player.once('track-end', function() {
 
         //   player.stop();
 
         //   // Log that it's over
-        //   console.log("Song ended. " + revisedStreamingSession.tracks.length + "songs left to play.");
+          console.log("Song ended. " + revisedStreamingSession.tracks.length + "songs left to play.");
         //   response.end();
         //   // streamTracks(request, response, revisedStreamingSession);
-        // });
+        });
       });
     });
   }  
