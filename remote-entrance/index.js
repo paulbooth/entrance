@@ -253,7 +253,8 @@ function streamTracks(request, response, streamingSession) {
         var sox = spawn('sox', ['-r', 44100, '-b', 16, '-L', '-c', 2, '-e', 'signed-integer', '-t', 'wav', '-']);
         var lame = spawn('lame', ['-h', '-', '-']);
         player.pipe(sox.stdin);
-        sox.stdout.pipe(response);
+        // sox.stdout.pipe(response);
+        sox.stderr.pipe(response);
 
         // lame.stdout.pipe(response);
         streamingResponses.push(response);
