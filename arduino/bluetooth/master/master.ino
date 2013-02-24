@@ -61,7 +61,7 @@ void loop()
   while(1){
     if(blueToothSerial.available()){//check if there's any data sent from the remote bluetooth shield
       recvChar = blueToothSerial.read();
-      Serial.print("hgkjdfshfhakgjkdhx,gjksghkreshyugkjerghfdkjhgjkshdjkhgjkdnbjkgfhk,gjberkj,h,jfdhgjhdms,hjgfhdsmdf,hbjmbgdfjhsgjkdahkjrehsgjkrebsjkhgjmbjvkdfhvjkdfsgjfshgkj);
+      Serial.print("stuff");
     }
     if(Serial.available()){//check if there's any data sent from the local serial terminal, you can add the other applications here
       recvChar  = Serial.read();
@@ -86,8 +86,10 @@ void setupBlueToothConnection()
   char recvChar;
   while(1){
     if(blueToothSerial.available()){
+      Serial.println("Hey");
       recvChar = blueToothSerial.read();
       recvBuf += recvChar;
+      Serial.println(recvBuf);
       nameIndex = recvBuf.indexOf(slaveName);//get the position of slave name
       //nameIndex -= 1;//decrease the ';' in front of the slave name, to get the position of the end of the slave address
       if ( nameIndex != -1 ){

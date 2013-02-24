@@ -2,7 +2,7 @@ var http = require('http');
 var gateKeeperHostname = 'fb-gate-keeper.herokuapp.com';
 
 /*
- * Authenticates with out backend. Retrieves the facebookid
+ * Authenticates with our backend. Retrieves the facebookid
  * of the user with that rfid uid. 
  * Callback: function that accepts an error and a facebookID
  */
@@ -13,7 +13,7 @@ var gateKeeperHostname = 'fb-gate-keeper.herokuapp.com';
   // Configure our get request
   var options = {
     host: gateKeeperHostname,
-    path: '/entrance/user/' + encodeURIComponent(deviceID) 
+    path: '/api/tokens/' + encodeURIComponent(deviceID) 
   };
 
    http.get(options, function(res) {
@@ -32,6 +32,7 @@ var gateKeeperHostname = 'fb-gate-keeper.herokuapp.com';
       console.log("Response received from GateKeeper.");
       console.log("Status Code: " + res.statusCode);
       JSONResponse = JSON.parse(output);
+      console.log(JSONResponse);
       JSONResultParse(JSONResponse, callback);
     });
   }); // end of http.get

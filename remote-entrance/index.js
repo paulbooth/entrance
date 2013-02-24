@@ -14,7 +14,13 @@ var express = require('express')
   , sp = require('libspotify')
   , assert = require('assert')
   , knox = require('knox')
+  , lifegraph = require('lifegraph')
   , spawn = require('child_process').spawn;
+
+// App key and secret (these are git ignored)
+var key = process.env.FBKEY || require('./config.json').fbapp_key;
+var secret = process.env.FBSECRET || require('./config.json').fbapp_secret;
+var namespace = 'entranceapp';
 
 var app = express();
 var hostUrl = 'http://entranceapp.herokuapp.com';
@@ -44,6 +50,12 @@ app.configure('development', function(){
   app.use(express.errorHandler());
 });
 
+/**
+ * Configure Lifegraph.
+ */
+
+lifegraph.configure(namespace, key, secret);
+
 app.get('/', function (req, res){
   res.render('index');
 });
@@ -66,15 +78,14 @@ app.get('/:localEntranceId/:deviceId/tap', function (req, res) {
 });
 
 function handleTap(localEntranceId, deviceId, hollaback) {
-  gateKeeper.requestUser(deviceId, function (error, user) {
+  lifegraph.connect(deviceId, function (error, user) {
+    console.log("Found user");
+    console.log(user);
     // If we have an error, then there was a problem with the HTTP call
     // or the user isn't in the db and they need to sync
     if (error) {
-      console.log("We had an error with Gatekeeper: " + error.message);
-      
-      return hollaback({'error': "We had an error with Gatekeeper: " + error.message});
-      // Send something to the local entrance device to let it know if
-      // a.) there was a network error or b.) the device needs to sync
+      console.log("We had an error with lifegraph:", error);
+      return hollaback({'error': "Physical ID has not been bound to an account. Go to http://connect.lifegraphlabs.com/, Connect with Entrance Tutorial, and tap again."});
     } 
 
     // Grab those who are already in the room 
@@ -323,13 +334,13 @@ function getTracksForUsers(users) {
  */
 function getFacebookFavoriteArtists(facebookUser, callback) {
 
-  // console.log("ACCESS TOKEN: " + facebookUser.access_token);
+  console.log("ACCESS TOKEN: " + facebookUser.tokens.oauthAccessToken);
 
   // Use the Facebook API to get all the music likes of a user
   var options = {
       host: 'graph.facebook.com',
       port: 443,
-      path: '/me/music?access_token=' + facebookUser.access_token
+      path: '/me/music?access_token=' + facebookUser.tokens.oauthAccessToken
     };
   https.get(options, function(fbres) {
       var output = '';
@@ -342,6 +353,8 @@ function getFacebookFavoriteArtists(facebookUser, callback) {
         // console.log("favtracks output for %s:", facebookUser.name);
         // console.log(output);
         var data = JSON.parse(output).data;
+        console.log("favorite artists:");
+        console.log(data);
         callback(data.map(function (artist) { return artist.name;}));
       });
   });
@@ -543,17 +556,18 @@ function initializeServerAndDatabase() {
 
     // Make the call to grab out key
     s3Client.get('spotify_appkey.key').on('response', function(res){
-
       // Create the buffer to store bits
       var appKey = [];
 
       // Build the app key buffer
       res.on('data', function (chunk){
         appKey.push(chunk);
+        console.log(chunk);
       });
 
       // When we're done collecting the key, connect to spotify
       res.on("end", function() {
+        console.log(appKey);
         connectSpotify(Buffer.concat(appKey), function(spotifySession) {
 
           // We've succesfully connected!
@@ -573,7 +587,7 @@ function initializeServerAndDatabase() {
  * Beings a spotify session
  */
 function connectSpotify (appKey, callback) {
-
+  console.log('hey connecting now:' + appKey)
   // Create a spotify session wth our api key
   spotifySession = new sp.Session({
     applicationKey: appKey

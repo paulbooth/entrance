@@ -4,3 +4,4 @@
 /local-entrance/node_modules
 /remote-entrance/node_modules
 .env
+/remote-entrance/spotify_appkey.key
