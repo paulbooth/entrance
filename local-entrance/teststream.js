@@ -15,20 +15,20 @@ function listen() {
     res.on('end', function() {
       play.kill();
       console.log("end.");
-      return listen();
+      // return listen();
     });
     res.on('error', function(err) {
       console.log("ERROR");
       console.log(err);
       play.kill();
-      return listen();
+      // return listen();
     })
     res.pipe(play.stdin);
   });
   } catch (e) {
     console.log("serious error.");
     console.log(e);
-    listen();
+    // listen();
   }
 }
 
