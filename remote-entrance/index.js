@@ -250,25 +250,24 @@ function streamTracks(request, response, streamingSession) {
         
         // Pipe the result
         // player.pipe(response);
-        var sox = spawn('sox', ['-r', 44100, '-b', 16, '-L', '-c', 2, '-e', 'signed-integer', '-t', 'wav', '-']);
+        var sox = spawn('sox', ['-r', 44100, '-b', 16, '-L', '-c', 2, '-e', 'signed-integer', '-t', 'raw', '-']);
         var lame = spawn('lame', ['-h', '-', '-']);
         player.pipe(sox.stdin);
-        // sox.stdout.pipe(response);
         sox.stderr.pipe(response);
 
         // lame.stdout.pipe(response);
         streamingResponses.push(response);
 
         // When the player finishes
-        player.once('track-end', function() {
+        // player.once('track-end', function() {
 
         //   player.stop();
 
         //   // Log that it's over
-          console.log("Song ended. " + revisedStreamingSession.tracks.length + "songs left to play.");
+        //   console.log("Song ended. " + revisedStreamingSession.tracks.length + "songs left to play.");
         //   response.end();
         //   // streamTracks(request, response, revisedStreamingSession);
-        });
+        // });
       });
     });
   }  
