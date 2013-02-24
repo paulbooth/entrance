@@ -215,7 +215,6 @@ function fakeStreamTracks (request, response, streamingSession) {
     return streamTracks(request, response, streamingSession);
   }
 }
-// var gooone = false;
 function streamTracks(request, response, streamingSession) {
   console.log("stream tracks");
 
@@ -248,18 +247,17 @@ function streamTracks(request, response, streamingSession) {
         // Start playing it
         player.play();
 
-        // if (!gooone) {
-          // Pipe the result
-          // player.pipe(response);
-          var sox = spawn('sox', ['-r', 44100, '-b', 16, '-L', '-c', 2, '-e', 'signed-integer', '-t', 'raw', '-', '-t', 'wav', '-']);
-          var lame = spawn('lame', ['-h', '-', '-']);
+        
+        // Pipe the result
+        // player.pipe(response);
+        var sox = spawn('sox', ['-r', 44100, '-b', 16, '-L', '-c', 2, '-e', 'signed-integer', '-t', 'raw', '-', '-t', 'wav', '-']);
+        var lame = spawn('lame', ['-h', '-', '-']);
+        console.log(sox);
+        player.pipe(sox.stdin);
+        sox.stdout.pipe(response);
 
-          player.pipe(response);
-          // sox.stdout.pipe(response);
-
-          // lame.stdout.pipe(response);
-          streamingResponses.push(response);
-        // }
+        // lame.stdout.pipe(response);
+        streamingResponses.push(response);
 
         // When the player finishes
         // player.once('track-end', function() {
