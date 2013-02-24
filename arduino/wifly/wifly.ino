@@ -4,7 +4,7 @@
 #include <SPI.h>
 #include <WiFly.h>
 
-WiFlyClient client("entrance.herokuapp.com", 80);
+WiFlyClient client("entranceapp.herokuapp.com", 80);
 int analogPin = 9;
 
 
@@ -38,9 +38,9 @@ void setup() {
 
 void loop() {
   if (client.available()) {
-    char c = client.read();
-    Serial.println(c, HEX);
-    analogWrite(analogPin, c);
+    byte b = client.read();
+    Serial.println(b);
+    analogWrite(analogPin, b);
   }
   
   if (!client.connected()) {
