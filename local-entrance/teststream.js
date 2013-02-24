@@ -14,6 +14,7 @@ function listen() {
     });
     res.on('end', function() {
       play.kill();
+      console.log("end.");
       return listen();
     });
     res.on('error', function(err) {

@@ -255,9 +255,9 @@ function streamTracks(request, response, streamingSession) {
           var lame = spawn('lame', ['-h', '-', '-']);
 
           player.pipe(sox.stdin);
-          sox.stdout.pipe(lame.stdin);
+          sox.stdout.pipe(response);
 
-          lame.stdout.pipe(response);
+          // lame.stdout.pipe(response);
           streamingResponses.push(response);
         // }
 
