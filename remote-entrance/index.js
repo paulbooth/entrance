@@ -24,7 +24,6 @@ var namespace = 'entranceapp';
 
 var app = express();
 var hostUrl = 'http://entranceapp.herokuapp.com';
-var gateKeeper = require("./gate-keeperClient.js");
 var db;
 var spotifySession;
 var streamingResponses = [];
