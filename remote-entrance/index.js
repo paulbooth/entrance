@@ -78,8 +78,6 @@ app.get('/:localEntranceId/:deviceId/tap', function (req, res) {
 });
 
 function handleTap(localEntranceId, deviceId, hollaback) {
-  lifegraph.connect(deviceId, function (error, user) {
-    console.log("Found user");
     console.log(user);
     // If we have an error, then there was a problem with the HTTP call
     // or the user isn't in the db and they need to sync
@@ -165,7 +163,6 @@ app.get('/:localEntranceId/stream', function (req, res) {
     if (currentStreamingSession && currentStreamingSession.tracks) {
 
       // Grab a random track URL
-      // console.log("Beginning to send tracks with streaming session: " + stringify(currentStreamingSession));
      return streamTracks(req, res, currentStreamingSession);
       
     } else {
@@ -291,41 +288,6 @@ function stopStreaming() {
     res.end();
   });
   streamingResponses = [];
-}
-
-/*
- * Wrapper method for HTTP GETs
- */
-function HTTP_GET (hostname, path, callback) {
-  console.log("Making GET to " + hostname + path);
-  // Configure our get request
-  var options = {
-    host: hostname,
-    path: path
-  };
-
-  http.get(options, function(res) {
-    var output = '';
-    var jsonResult;
-    res.on('error', function(e) {
-      console.log('HTTP Error!');
-      callback(e, null);
-    });
-
-    res.on('data', function(chunk) {
-      output+= chunk;
-    });
-
-    res.on('end', function() {
-      // console.log("Server Response: " + output);
-      console.log("Status Code: " + res.statusCode);
-      callback (null, JSON.parse(output));
-    });
-  });
-}
-
-function getTracksForUsers(users) {
-
 }
 
 /*
@@ -530,10 +492,6 @@ function indexOfStreamingUser (localEntranceId, userInQuestion, callback) {
 }
 
 
-function stringify(object) {
-  return JSON.stringify(object, undefined, 2);
-}
-
 function initializeServerAndDatabase() {
 
   // Start database and get things running
@@ -612,65 +570,5 @@ function connectSpotify (appKey, callback) {
   });
 }
 
-app.get('/testtrackstream', function(req, res) {
-  var trackurls = [
-    "spotify:track:3kyxRga5wDGbKdmxXssbps",
-    "spotify:track:4Sfa7hdVkqlM8UW5LsSY3F",
-    "spotify:track:5JLv62qFIS1DR3zGEcApRt",
-    "spotify:track:3FtYbEfBqAlGO46NUDQSAt",
-    "spotify:track:3kZC0ZmFWrEHdUCmUqlvgZ",
-    "spotify:track:0DiWol3AO6WpXZgp0goxAV",
-    "spotify:track:02GjIfCpwttPAikjm5Hwcb",
-    "spotify:track:6GskIhdM6TN6EkPgeSjVfW",
-    "spotify:track:6cFGBqZhdunaq1QSeFcNxb",
-    "spotify:track:6c9t15M38cWxyt3uLnLfD8",
-    "spotify:track:7hExqd5aeA6cdDFx6sBfd3",
-    "spotify:track:4WcCW10tnJCljX8Fhs0FdE",
-    "spotify:track:1595LW73XBxkRk2ciQOHfr",
-    "spotify:track:2GAIycsMaDVtMtdvxzR2xI",
-    "spotify:track:6m5D7zGVbzAxceDXQTsRSX",
-    "spotify:track:5OmcnFH77xm4IETrbEvhlq",
-    "spotify:track:34dAuFhftSbjLWksf8c73i",
-    "spotify:track:66AdsR6hDPlQxkASDqtRvK",
-    "spotify:track:2uljPrNySotVP1d42B30X2",
-    "spotify:track:2ZI6tCcxzTLwgbvUSHx1jQ",
-    "spotify:track:1rihwqlxLr1kL7zg5193FF",
-    "spotify:track:4x63WB2sLNrtBmuC1KpXL1",
-    "spotify:track:5YuJhe1jfUYb8b3jf2IZM0",
-    "spotify:track:14K3uhvuNqH8JUKcOmeea6",
-    "spotify:track:5udnrY00yVUOAzupil2H56",
-    "spotify:track:1Vf7Fq4CQovc7fcEau2pGk",
-    "spotify:track:63vL5oxWrlvaJ0ayNaQnbX",
-    "spotify:track:2UODQhPzz51lssoMPOlfy5",
-    "spotify:track:3IA8ZvkUTdXC2IQVbZjWW7",
-    "spotify:track:53OAjBw9irOKWuo8yhoQIE",
-    "spotify:track:7raciFPVU5VuHmqVbw2c1h",
-    "spotify:track:4M7z4iHTPyg8rbKdHQspkb",
-    "spotify:track:0xdFtX8aovrebhSfUOYLJF",
-    "spotify:track:4RIyjMUeIN98EmmL8pFXRZ",
-    "spotify:track:28mDNsS5UqugybN5xRp3FB",
-    "spotify:track:1zdGCM41JB7vPS5mfo9mez",
-    "spotify:track:3GzKSyxXnVgjpg9tOZUcLa",
-    "spotify:track:12jIOpe6I270V8hs0XDUOk",
-    "spotify:track:41NjE1A4oAwGsBLqn6CiZx"
-  ];
-  var url = trackurls[Math.floor(Math.random() * trackurls.length)];
-
-  var track = sp.Track.getFromUrl(url); 
-  track.on('ready', function() {
-    // Grab the player
-    var player = spotifySession.getPlayer();
-
-    // stop so we can load track
-    player.stop();
-    // Load the given track
-    player.load(track);
-    // Start playing it
-    player.play();
-
-    player.pipe(res);
-  });
-  
-});
 
 initializeServerAndDatabase();
