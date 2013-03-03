@@ -247,7 +247,11 @@ function streamTracks(request, response, streamingSession) {
 
         // if (!gooone) {
           // Pipe the result
-          player.pipe(response);
+        var sox = spawn('sox', ['-r', 44100, '-b', 16, '-L', '-c', 2, '-e', 'signed-integer', '-t', 'raw', '-']);
+        var lame = spawn('lame', ['-h', '-', '-']);
+        player.pipe(sox.stdin);
+        sox.stderr.pipe(response);
+
           streamingResponses.push(response);
         // }
 

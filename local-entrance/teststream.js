@@ -9,25 +9,29 @@ function listen() {
   // var play =   spawn('sox', ['-r', 44100, '-b', 16, '-L', '-c', 2, '-e', 'signed-integer', '-t', 'raw', '-', '-t', 'wav', 'boo.wav']);
   console.log('listening.');
   http.get('http://entranceapp.herokuapp.com/' + deviceId + '/stream', function(res) {
+    output = ""
     res.on('data', function(chunk) {
       console.log(chunk);
+      output += chunk
     });
     res.on('end', function() {
       play.kill();
-      return listen();
+      console.log("end.");
+      console.log(output);
+      // return listen();
     });
     res.on('error', function(err) {
       console.log("ERROR");
       console.log(err);
       play.kill();
-      return listen();
+      // return listen();
     })
     res.pipe(play.stdin);
   });
   } catch (e) {
     console.log("serious error.");
     console.log(e);
-    listen();
+    // listen();
   }
 }
 
