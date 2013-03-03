@@ -42,7 +42,7 @@ app.get('/:deviceId/:pId/tap', tapHandler.tap);
 // Endpoint for receiving mp3 streams
 app.get('/:deviceID/stream', streamHandler.stream);
 
-app.get('/:deviceID/fakestream', streamHandler.fakeStream);
+app.get('/:deviceID/fakestream', streamHandler.waitStream);
 
 // Start database and get things running
 console.log("connecting to Mongo...");
