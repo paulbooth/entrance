@@ -6,6 +6,7 @@ var databaseHandler = require('./databaseHandler')
 
 var _spotifySession;
 var _streamingResponses = [];
+var _waitListener;
 
 configure = function(callback) {
 	var s3Client = knox.createClient({
@@ -88,27 +89,24 @@ stopStream = function() {
 }
 
 waitStream = function (req, res) {
-  getCurrentStreamingSession(req.params.localEntranceId, function (error, currentStreamingSession) {
 
-    currentStreamingSession.tracks = [];
-
-    setTracksToStreamingSession(req.params.localEntranceId, [], function (err, newStreamingSession) {
-      return fakeStreamTracks(req, res, newStreamingSession);
-      
-    });
-     
+  databaseHandler.setTracksToStreamingSession(req.params.deviceID, [], function (err, newStreamingSession) {
+    return waitStreamTracks(req, res, newStreamingSession);
+    
   });
 }
 
 waitStreamTracks = function (request, response, streamingSession) {
+
+	if (_waitListener) clearTimeout(_waitListener);
 
   if (streamingSession.tracks.length == 0) {
       var player = _spotifySession.getPlayer();
 
       player.pipe(response);
 
-      setTimeout(function() { 
-        return getCurrentStreamingSession(request.params.localEntranceId, function (error, newCurrentStreamingSession) {
+      _waitListener = setTimeout(function() { 
+        return databaseHandler.getCurrentStreamingSession(request.params.deviceID, function (error, newCurrentStreamingSession) {
           waitStreamTracks(request, response, newCurrentStreamingSession); }) }, 2000);
 
       return;
