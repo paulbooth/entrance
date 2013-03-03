@@ -30,7 +30,6 @@ function getCurrentStreamingSession(deviceId, callback) {
   if (!deviceId) {
   	return (new Error("No deviceID supplied to retrieve current streaming session."), null);
   }
-
   StreamingSession.findOne({
     deviceId: deviceId
   }, function (err, streamingSession) {
@@ -98,7 +97,6 @@ function removeUserFromStreamingUsers(deviceId, userInQuestion, callback) {
 }
 
 function indexOfStreamingUser(deviceId, userInQuestion, callback) {
-  console.log("Get Current Streaming Session");
   
   if (!deviceId || !userInQuestion) {
     return callback(new Error("DeviceID and/or userInQuestion cannot be null"));
@@ -107,20 +105,13 @@ function indexOfStreamingUser(deviceId, userInQuestion, callback) {
   getCurrentStreamingSession(deviceId, function (err, streamingSession) {
 
     if (err)  {
-      console.log("Oh fuck err"); 
       return callback(err, -1);
     } 
-
-    console.log("No error");
-
     for (var i = 0; i < streamingSession.streamingUsers.length; i++) {
-      console.log("I", i);
       if (streamingSession.streamingUsers[i].id == userInQuestion.id) {
-        console.log("HIT IT");
         return callback(null, i);
       }
     }
-    console.log("FUCK IT");
     return callback(null, -1);
   });
 }

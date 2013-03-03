@@ -1,14 +1,14 @@
 var http = require('http');
 var spawn = require('child_process').spawn;
 
-var deviceId = '30f911883803c643';
+var deviceId = 'test';
 
 function listen() {
   try{
   var play = spawn('play', ['-r', 44100, '-b', 16, '-L', '-c', 2, '-e', 'signed-integer', '-t', 'raw', '-']);
   // var play =   spawn('sox', ['-r', 44100, '-b', 16, '-L', '-c', 2, '-e', 'signed-integer', '-t', 'raw', '-', '-t', 'wav', 'boo.wav']);
   console.log('listening.');
-  http.get('http://entranceapp.herokuapp.com/' + deviceId + '/stream', function(res) {
+  http.get('http://localhost:5000/' + deviceId + '/stream', function(res) {
     output = ""
     res.on('data', function(chunk) {
       console.log(chunk);
