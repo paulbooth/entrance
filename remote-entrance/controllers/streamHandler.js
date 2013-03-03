@@ -63,7 +63,7 @@ stream = function (req, res) {
   databaseHandler.getCurrentStreamingSession(req.params.deviceID, function (error, currentStreamingSession) {
     // (Hopefully this session has tracks)
     // console.log("found streaming session:" + currentStreamingSession);
-    if (currentStreamingSession && currentStreamingSession.tracks) {
+    if (currentStreamingSession && currentStreamingSession.tracks && currentStreamingSession.tracks.length) {
 
       // Grab a random track URL
      return streamTracks(req, res, currentStreamingSession);
@@ -85,6 +85,36 @@ stopStream = function() {
     res.end();
   });
   _streamingResponses = [];
+}
+
+waitStream = function (req, res) {
+  getCurrentStreamingSession(req.params.localEntranceId, function (error, currentStreamingSession) {
+
+    currentStreamingSession.tracks = [];
+
+    setTracksToStreamingSession(req.params.localEntranceId, [], function (err, newStreamingSession) {
+      return fakeStreamTracks(req, res, newStreamingSession);
+      
+    });
+     
+  });
+}
+
+waitStreamTracks = function (request, response, streamingSession) {
+
+  if (streamingSession.tracks.length == 0) {
+      var player = _spotifySession.getPlayer();
+
+      player.pipe(response);
+
+      setTimeout(function() { 
+        return getCurrentStreamingSession(request.params.localEntranceId, function (error, newCurrentStreamingSession) {
+          waitStreamTracks(request, response, newCurrentStreamingSession); }) }, 2000);
+
+      return;
+  } else {
+    return streamTracks(request, response, streamingSession);
+  }
 }
 
 streamTracks = function (request, response, streamingSession) {
@@ -215,4 +245,5 @@ getTracksFromArtists = function(artists, callback) {
 module.exports.getTracksFromArtists = getTracksFromArtists;
 module.exports.configure = configure; 
 module.exports.stopStream = stopStream;
+module.exports.waitStream = waitStream;
 module.exports.stream = stream;
