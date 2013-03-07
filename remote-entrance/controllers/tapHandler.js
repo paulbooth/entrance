@@ -18,12 +18,16 @@ lifegraph.configure(_namespace, _key, _secret);
 eImpTap = function(req, res) {
 	// Parse content.
   var deviceId = req.body.target;
-  var pID = req.body.value; // assume whole body is the deviceId
-  pID = pID.replace(/\u0010/g, ''); // don't know why this is here
-  console.log("eimp with location: %s and device: %s", deviceId, pID);
-  handleTap(deviceId, pID, function(json) {
-    res.json(json);
-  });
+  var pId = req.body.value; // assume whole body is the deviceId
+  if (pId && deviceId) {
+    pID = pID.replace(/\u0010/g, ''); // don't know why this is here
+    console.log("eimp with location: %s and device: %s", deviceId, pID);
+    handleTap(deviceId, pID, function(json) {
+      res.json(json);
+    });
+  } else {
+    res.json("{ error : Incorrect Paramters }");
+  }
 }
 
 tap = function (req, res) {
