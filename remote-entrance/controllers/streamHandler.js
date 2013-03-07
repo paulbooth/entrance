@@ -2,7 +2,8 @@ var databaseHandler = require('./databaseHandler')
 	, sp = require('libspotify')
 	, arrayExtender = require('../utilities/arrayExtender')
 	, spawn = require('child_process').spawn
-	, knox = require('knox');
+	, knox = require('knox')
+  , lame = require('lame');
 
 var _spotifySession;
 var _streamingResponses = [];
@@ -156,12 +157,16 @@ streamTracks = function (request, response, streamingSession) {
 
         //  _streamingResponses.push(response);
         var sox = spawn('sox', ['-r', 44100, '-b', 16, '-L', '-c', 2, '-e', 'signed-integer', '-t', 'raw', '-', '-t', 'wav', '-']);
-        var play = spawn('play', ['-t', 'mp3', '-']);
-        var lame = spawn('lame', ['-h', '-', '-']);
+
+        var encoder = new lame.Encoder({
+          channels: 2,
+          bitDepth: 16,
+          sampleRate: 44100
+        });
 
         player.pipe(sox.stdin);
-        sox.stdout.pipe(lame.stdin);
-        lame.stdout.pipe(response);
+        sox.stdout.pipe(encoder);
+        encoder.pipe(response);
         _streamingResponses.push(response);
         // }
 

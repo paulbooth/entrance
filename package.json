@@ -13,7 +13,8 @@
     "serialport": "~1.0.8",
     "knox": "latest",
     "request": "~2.12.0",
-    "lifegraph": "*"
+    "lifegraph": "*",
+    "lame": "*"
   },
   "engines": {
     "node": "0.8.x",
