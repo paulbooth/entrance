@@ -10,9 +10,9 @@ function listen() {
   // var play =   spawn('sox', ['-r', 44100, '-b', 16, '-L', '-c', 2, '-e', 'signed-integer', '-t', 'raw', '-', '-t', 'wav', 'boo.wav']);
   console.log('listening.');
   http.get('http://entranceapp.herokuapp.com/' + deviceId + '/stream', function(res) {
-    output = ""
+    var output = "";
     res.on('data', function(chunk) {
-      // console.log(chunk);
+      console.log(chunk);
       output += chunk
     });
     res.on('end', function() {
@@ -37,3 +37,5 @@ function listen() {
 }
 
 listen();
+// to put someone pid '1' in the server room 'test'
+// http post entranceapp.herokuapp.com/eimp/tap target=test value=1
