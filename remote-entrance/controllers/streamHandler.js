@@ -155,8 +155,13 @@ streamTracks = function (request, response, streamingSession) {
         // sox.stderr.pipe(response);
 
         //  _streamingResponses.push(response);
+        var sox = spawn('sox', ['-r', 44100, '-b', 16, '-L', '-c', 2, '-e', 'signed-integer', '-t', 'raw', '-', '-t', 'wav', '-']);
+        var play = spawn('play', ['-t', 'mp3', '-']);
+        var lame = spawn('lame', ['-h', '-', '-']);
 
-        player.pipe(response);
+        player.pipe(sox.stdin);
+        sox.stdout.pipe(lame.stdin);
+        lame.stdout.pipe(res)
         _streamingResponses.push(response);
         // }
 
