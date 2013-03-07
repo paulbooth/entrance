@@ -148,25 +148,19 @@ streamTracks = function (request, response, streamingSession) {
         // Start playing it
         player.play();
 
-        // if (!gooone) {
-          // Pipe the result
-        // var sox = spawn('sox', ['-r', 44100, '-b', 16, '-L', '-c', 2, '-e', 'signed-integer', '-t', 'raw', '-']);
-        // var lame = spawn('lame', ['-h', '-', '-']);
-        // player.pipe(sox.stdin);
-        // sox.stderr.pipe(response);
-
-        //  _streamingResponses.push(response);
-        var sox = spawn('sox', ['-r', 44100, '-b', 16, '-L', '-c', 2, '-e', 'signed-integer', '-t', 'raw', '-', '-t', 'wav', '-']);
-
+        // Create an mp3 encoder 
         var encoder = new lame.Encoder({
           channels: 2,
           bitDepth: 16,
           sampleRate: 44100
         });
 
-        player.pipe(sox.stdin);
-        sox.stdout.pipe(encoder);
+        // Pipe the PCM into the encoder
+        player.pipe(encoder);
+
+        // Pipe the MP3 into the response
         encoder.pipe(response);
+        
         _streamingResponses.push(response);
         // }
 

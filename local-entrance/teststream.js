@@ -6,12 +6,9 @@ var deviceId = 'test';
 
 function listen() {
   try{
-  // var play = spawn('play', ['-r', 44100, '-b', 16, '-L', '-c', 2, '-e', 'signed-integer', '-t', 'raw', '-']);
-   // var sox1 = spawn('sox', ['-r', 44100, '-b', 16, '-L', '-c', 2, '-e', 'signed-integer', '-t', 'raw', '-', '-t', 'wav', '-']);
    var play1 = spawn('play', ['-t', 'mp3', '-']);
-   // var lame = spawn('lame', ['-h', '-', '-']);
   console.log('listening.');
-  http.get('http://entranceapp.herokuapp.com/' + deviceId + '/stream', function(res) {
+  http.get('http://localhost:5000/' + deviceId + '/stream', function(res) {
     var output = "";
     res.on('data', function(chunk) {
       console.log(chunk);
@@ -30,8 +27,6 @@ function listen() {
       return listen();
     })
     res.pipe(play1.stdin);
-    // sox1.stdout.pipe(lame.stdin);
-    // lame.stdout.pipe(play1.stdin);
 
   });
   } catch (e) {
