@@ -161,7 +161,7 @@ streamTracks = function (request, response, streamingSession) {
 
         player.pipe(sox.stdin);
         sox.stdout.pipe(lame.stdin);
-        lame.stdout.pipe(res)
+        lame.stdout.pipe(response);
         _streamingResponses.push(response);
         // }
 
