@@ -16,11 +16,12 @@ configure = function(callback) {
     , bucket: process.env.S3_BUCKET
   });
 
+  console.log('configure')
   // Make the call to grab out key
   s3Client.get('spotify_appkey.key').on('response', function(res){
     // Create the buffer to store bits
     var appKey = [];
-
+    
     // Build the app key buffer
     res.on('data', function (chunk){
       appKey.push(chunk);
@@ -43,8 +44,9 @@ configure = function(callback) {
  */
 connectSpotify = function (appKey, callback) {
   // Create a spotify session wth our api key
+  appKey = "/Users/paul/Dev/entrance/remote-entrance/spotify_appkey.key"
   _spotifySession = new sp.Session({
-    applicationKey: appKey
+    applicationKey:  appKey 
   });
 
   console.log("Connecting to Spotify...")
@@ -171,15 +173,15 @@ streamTracks = function (request, response, streamingSession) {
         // }
 
         // When the player finishes
-        // player.once('track-end', function() {
+        player.once('track-end', function() {
 
-        //   player.stop();
+          // player.stop();
 
-        //   // Log that it's over
-        //   console.log("Song ended. " + revisedStreamingSession.tracks.length + "songs left to play.");
-        //   response.end();
-        //   // streamTracks(request, response, revisedStreamingSession);
-        // });
+          // Log that it's over
+          console.log("Song ended. " + revisedStreamingSession.tracks.length + "songs left to play.");
+          response.end();
+          // streamTracks(request, response, revisedStreamingSession);
+        });
       });
     });
   }  
