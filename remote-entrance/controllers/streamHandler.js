@@ -72,7 +72,7 @@ stream = function (req, res) {
     } else {
 
       // Something weird happened if there aren't any tracks
-      res.send("{'error' : 'There are no tracks to stream.'");
+      res.send("{'error' : 'There are no tracks to stream.'}");
     }
   });
 }

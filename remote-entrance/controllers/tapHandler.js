@@ -20,9 +20,9 @@ eImpTap = function(req, res) {
   var deviceId = req.body.target;
   var pId = req.body.value; // assume whole body is the deviceId
   if (pId && deviceId) {
-    pID = pID.replace(/\u0010/g, ''); // don't know why this is here
-    console.log("eimp with location: %s and device: %s", deviceId, pID);
-    handleTap(deviceId, pID, function(json) {
+    pId = pId.replace(/\u0010/g, ''); // don't know why this is here
+    console.log("eimp with location: %s and device: %s", deviceId, pId);
+    handleTap(deviceId, pId, function(json) {
       res.json(json);
     });
   } else {
@@ -36,9 +36,9 @@ tap = function (req, res) {
   });
 }
 
-handleTap = function(deviceID, pID, hollaback) {
+handleTap = function(deviceID, pId, hollaback) {
 
-  lifegraph.connect(pID, function (error, user) {
+  lifegraph.connect(pId, function (error, user) {
     // If we have an error, then there was a problem with the HTTP call
     // or the user isn't in the db and they need to sync
     if (error) {
