@@ -44,7 +44,7 @@ configure = function(callback) {
  */
 connectSpotify = function (appKey, callback) {
   // Create a spotify session wth our api key
-  appKey = "/Users/paul/Dev/entrance/remote-entrance/spotify_appkey.key"
+  // appKey = "/Users/paul/Dev/entrance/remote-entrance/spotify_appkey.key"
   _spotifySession = new sp.Session({
     applicationKey:  appKey 
   });
@@ -137,7 +137,7 @@ streamTracks = function (request, response, streamingSession) {
       // When the track is ready
       track.on('ready', function() {
         console.log('track ready.');
-
+        response.header("Content-Type", "audio/mpeg");
         // Grab the player
         var player = _spotifySession.getPlayer();
 
@@ -174,7 +174,7 @@ streamTracks = function (request, response, streamingSession) {
           // Log that it's over
           console.log("Song ended. " + revisedStreamingSession.tracks.length + "songs left to play.");
           response.end();
-          
+
           // streamTracks(request, response, revisedStreamingSession);
         });
       });
