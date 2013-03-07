@@ -174,6 +174,7 @@ streamTracks = function (request, response, streamingSession) {
           // Log that it's over
           console.log("Song ended. " + revisedStreamingSession.tracks.length + "songs left to play.");
           response.end();
+          
           // streamTracks(request, response, revisedStreamingSession);
         });
       });
