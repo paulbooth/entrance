@@ -30,7 +30,19 @@ eImpTap = function(req, res) {
   }
 }
 
-tap = function (req, res) {
+postTap = function(req, res) {
+  var deviceId = req.body.deviceId;
+  var pId = req.body.pId;
+  if (pId && deviceId) {
+    console.log("non-eimp post with deviceId: %s and pId: %s", deviceId, pId);
+    handleTap(deviceId, pId, function(json) {
+      res.json(json);
+  });
+  else {
+    res.json("{ error : Incorrect Paramters }");
+  }
+}
+getTap = function (req, res) {
   handleTap(req.params.deviceId, req.params.pId, function(json) {
     res.json(json);
   });
@@ -130,5 +142,6 @@ handleTap = function(deviceID, pId, hollaback) {
   });
 }
 
-module.exports.tap = tap;
+module.exports.postTap = postTap;
+module.exports.getTap = getTap;
 module.exports.eImpTap = eImpTap;

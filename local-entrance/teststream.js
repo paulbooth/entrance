@@ -8,7 +8,7 @@ function listen() {
   try{
    var play1 = spawn('play', ['-t', 'mp3', '-']);
   console.log('listening.');
-  http.get('http://localhost:5000/' + deviceId + '/stream', function(res) {
+  http.get('http://entranceapp.herokuapp.com/' + deviceId + '/stream', function(res) {
     var output = "";
     res.on('data', function(chunk) {
       console.log(chunk);

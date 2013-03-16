@@ -36,6 +36,8 @@ app.get('/', index.index);
 // Electric imp endpoint for Entrance taps.
 app.post('/eimp/tap', tapHandler.eImpTap);
 
+app.post('/tap', tapHandler.postTap);
+
 // Non-Electric Imp endpoint
 app.get('/:deviceId/:pId/tap', tapHandler.tap);
 
