@@ -39,7 +39,7 @@ app.post('/eimp/tap', tapHandler.eImpTap);
 app.post('/tap', tapHandler.postTap);
 
 // Non-Electric Imp endpoint
-app.get('/:deviceId/:pId/tap', tapHandler.tap);
+app.get('/:deviceId/:pId/tap', tapHandler.getTap);
 
 // Endpoint for receiving mp3 streams
 app.get('/:deviceID/stream', streamHandler.stream);

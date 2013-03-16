@@ -37,7 +37,8 @@ postTap = function(req, res) {
     console.log("non-eimp post with deviceId: %s and pId: %s", deviceId, pId);
     handleTap(deviceId, pId, function(json) {
       res.json(json);
-  });
+    });
+  }
   else {
     res.json("{ error : Incorrect Paramters }");
   }
