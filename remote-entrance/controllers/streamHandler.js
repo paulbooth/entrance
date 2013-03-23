@@ -64,7 +64,7 @@ connectSpotify = function (appKey, callback) {
 }
 
 stream = function (req, res) {
-  databaseHandler.getCurrentStreamingSession(req.params.deviceID, function (error, currentStreamingSession) {
+  databaseHandler.getCurrentStreamingSession(req.params.deviceId, function (error, currentStreamingSession) {
     // (Hopefully this session has tracks)
     // console.log("found streaming session:" + currentStreamingSession);
     if (currentStreamingSession && currentStreamingSession.tracks && currentStreamingSession.tracks.length) {
@@ -93,32 +93,32 @@ stopStream = function() {
 
 waitStream = function (req, res) {
 
-  databaseHandler.setTracksToStreamingSession(req.params.deviceID, [], function (err, newStreamingSession) {
+  databaseHandler.setTracksToStreamingSession(req.params.deviceId, [], function (err, newStreamingSession) {
     return waitStreamTracks(req, res, newStreamingSession);
     
   });
 }
 
-waitStreamTracks = function (request, response, streamingSession) {
+waitStreamTracks = function (req, res, streamingSession) {
 
 	if (_waitListener) clearTimeout(_waitListener);
 
   if (streamingSession.tracks.length == 0) {
       var player = _spotifySession.getPlayer();
 
-      player.pipe(response);
+      player.pipe(res);
 
       _waitListener = setTimeout(function() { 
-        return databaseHandler.getCurrentStreamingSession(request.params.deviceID, function (error, newCurrentStreamingSession) {
-          waitStreamTracks(request, response, newCurrentStreamingSession); }) }, 2000);
+        return databaseHandler.getCurrentStreamingSession(req.params.deviceId, function (error, newCurrentStreamingSession) {
+          waitStreamTracks(req, res, newCurrentStreamingSession); }) }, 2000);
 
       return;
   } else {
-    return streamTracks(request, response, streamingSession);
+    return streamTracks(req, res, streamingSession);
   }
 }
 
-streamTracks = function (request, response, streamingSession) {
+streamTracks = function (req, res, streamingSession) {
   console.log("stream tracks");
 
   if (streamingSession.tracks.length != 0) {
@@ -128,7 +128,7 @@ streamTracks = function (request, response, streamingSession) {
 
     console.log("Song starting : " + streamingSession.tracks.length + " songs left to play.");
 
-    databaseHandler.removeTrackFromStreamingSession(request.params.deviceID, url, function (err, revisedStreamingSession) {
+    databaseHandler.removeTrackFromStreamingSession(req.params.deviceId, url, function (err, revisedStreamingSession) {
       // console.log("removed url, now revisedStreamingSession:" + revisedStreamingSession);
       // Fetch a track from the URL
       console.log("new url:" + url);
@@ -137,7 +137,7 @@ streamTracks = function (request, response, streamingSession) {
       // When the track is ready
       track.on('ready', function() {
         console.log('track ready.');
-        response.header("Content-Type", "audio/mpeg");
+        res.header("Content-Type", "audio/mpeg");
         // Grab the player
         var player = _spotifySession.getPlayer();
 
@@ -161,9 +161,9 @@ streamTracks = function (request, response, streamingSession) {
         player.pipe(encoder);
 
         // Pipe the MP3 into the response
-        encoder.pipe(response);
+        encoder.pipe(res);
         
-        _streamingResponses.push(response);
+        _streamingResponses.push(res);
         // }
 
         // When the player finishes
@@ -173,9 +173,9 @@ streamTracks = function (request, response, streamingSession) {
 
           // Log that it's over
           console.log("Song ended. " + revisedStreamingSession.tracks.length + "songs left to play.");
-          response.end();
+          res.end();
 
-          // streamTracks(request, response, revisedStreamingSession);
+          // streamTracks(req, res, revisedStreamingSession);
         });
       });
     });
@@ -191,10 +191,51 @@ streamTracks = function (request, response, streamingSession) {
     player.stop();
 
         // End the response
-    response.end();
+    res.end();
   }
 } 
 
+arduino = function(req, res) {
+
+  var url = "spotify:track:4W3Bkljqflf1SD5l2VEtfl";
+
+  var track = sp.Track.getFromUrl(url);
+
+  // When the track is ready
+  track.on('ready', function() {
+    res.header("Content-Type", "audio/mpeg");
+    // Grab the player
+    var player = _spotifySession.getPlayer();
+
+    // Stop the player so we can load next track
+    player.stop();
+
+    // Load the given track
+    player.load(track);
+
+    // Start playing it
+    player.play();
+
+    // Create an mp3 encoder 
+    var encoder = new lame.Encoder({
+      channels: 2,
+      bitDepth: 16,
+      sampleRate: 44100
+    });
+
+    // Pipe the PCM into the encoder
+    player.pipe(encoder);
+
+    // Pipe the MP3 into the response
+    encoder.pipe(res);
+
+    // When the player finishes
+    player.once('track-end', function() {
+
+      res.end();
+    });
+  });
+}
 getTracksFromArtists = function(artists, callback) {
   var loadedTracks = 0;
   var tracks = [];
@@ -245,8 +286,7 @@ getTracksFromArtists = function(artists, callback) {
     });
   });
 }
-
-
+module.exports.arduino = arduino;
 module.exports.getTracksFromArtists = getTracksFromArtists;
 module.exports.configure = configure; 
 module.exports.stopStream = stopStream;

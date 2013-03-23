@@ -41,10 +41,13 @@ app.post('/tap', tapHandler.postTap);
 // Non-Electric Imp endpoint
 app.get('/:deviceId/:pId/tap', tapHandler.getTap);
 
+app.get('/arduino/stream', streamHandler.arduino);
 // Endpoint for receiving mp3 streams
-app.get('/:deviceID/stream', streamHandler.stream);
+app.get('/:deviceId/stream', streamHandler.stream);
 
-app.get('/:deviceID/waitstream', streamHandler.waitStream);
+app.get('/:deviceId/waitstream', streamHandler.waitStream);
+
+
 
 // Start database and get things running
 console.log("connecting to Mongo...");
